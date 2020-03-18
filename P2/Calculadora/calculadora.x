@@ -14,5 +14,7 @@ program CALCULADORA {
         int RESTAR(int a, int b) = 2;
         int MULTP (int a, int b) = 3;
         int DIVID (int a, int b) = 4;
+        int POWER (int a, int b) = 5;
+        int MODULO(int a, int b) = 6;
     } = 1;
 } = 0x20000001;

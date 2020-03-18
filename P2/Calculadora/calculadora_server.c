@@ -5,6 +5,7 @@
  */
 
 #include "calculadora.h"
+#include <math.h>
 
 int *
 sumar_1_svc(int a, int b,  struct svc_req *rqstp)
@@ -42,6 +43,26 @@ divid_1_svc(int a, int b,  struct svc_req *rqstp)
 	static int  result;
 
 	result = a / b;
+
+	return &result;
+}
+
+int *
+power_1_svc(int a, int b,  struct svc_req *rqstp)
+{
+	static int  result;
+
+	result = pow(a, b);
+
+	return &result;
+}
+
+int *
+modulo_1_svc(int a, int b,  struct svc_req *rqstp)
+{
+	static int  result;
+
+	result = fmod(a, b);
 
 	return &result;
 }

@@ -40,6 +40,18 @@ _divid_1 (divid_1_argument *argp, struct svc_req *rqstp)
 	return (divid_1_svc(argp->a, argp->b, rqstp));
 }
 
+static int *
+_power_1 (power_1_argument *argp, struct svc_req *rqstp)
+{
+	return (power_1_svc(argp->a, argp->b, rqstp));
+}
+
+static int *
+_modulo_1 (modulo_1_argument *argp, struct svc_req *rqstp)
+{
+	return (modulo_1_svc(argp->a, argp->b, rqstp));
+}
+
 static void
 calculadora_1(struct svc_req *rqstp, register SVCXPRT *transp)
 {
@@ -48,6 +60,8 @@ calculadora_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		restar_1_argument restar_1_arg;
 		multp_1_argument multp_1_arg;
 		divid_1_argument divid_1_arg;
+		power_1_argument power_1_arg;
+		modulo_1_argument modulo_1_arg;
 	} argument;
 	char *result;
 	xdrproc_t _xdr_argument, _xdr_result;
@@ -80,6 +94,18 @@ calculadora_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		_xdr_argument = (xdrproc_t) xdr_divid_1_argument;
 		_xdr_result = (xdrproc_t) xdr_int;
 		local = (char *(*)(char *, struct svc_req *)) _divid_1;
+		break;
+
+	case POWER:
+		_xdr_argument = (xdrproc_t) xdr_power_1_argument;
+		_xdr_result = (xdrproc_t) xdr_int;
+		local = (char *(*)(char *, struct svc_req *)) _power_1;
+		break;
+
+	case MODULO:
+		_xdr_argument = (xdrproc_t) xdr_modulo_1_argument;
+		_xdr_result = (xdrproc_t) xdr_int;
+		local = (char *(*)(char *, struct svc_req *)) _modulo_1;
 		break;
 
 	default:

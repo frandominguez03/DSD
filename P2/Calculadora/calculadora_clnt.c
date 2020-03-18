@@ -76,3 +76,37 @@ divid_1(int a, int b,  CLIENT *clnt)
 	}
 	return (&clnt_res);
 }
+
+int *
+power_1(int a, int b,  CLIENT *clnt)
+{
+	power_1_argument arg;
+	static int clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	arg.a = a;
+	arg.b = b;
+	if (clnt_call (clnt, POWER, (xdrproc_t) xdr_power_1_argument, (caddr_t) &arg,
+		(xdrproc_t) xdr_int, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
+
+int *
+modulo_1(int a, int b,  CLIENT *clnt)
+{
+	modulo_1_argument arg;
+	static int clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	arg.a = a;
+	arg.b = b;
+	if (clnt_call (clnt, MODULO, (xdrproc_t) xdr_modulo_1_argument, (caddr_t) &arg,
+		(xdrproc_t) xdr_int, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}

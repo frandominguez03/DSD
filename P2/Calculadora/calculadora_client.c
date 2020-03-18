@@ -26,6 +26,8 @@ calculadora_1(char *host, int operando_derecha, char operador, int operando_izqu
 		case '-': resultado = restar_1(operando_derecha, operando_izquierda, clnt); break;
 		case 'x': resultado = multp_1(operando_derecha, operando_izquierda, clnt); break;
 		case '/': resultado = divid_1(operando_derecha, operando_izquierda, clnt); break;
+		case '^': resultado = power_1(operando_derecha, operando_izquierda, clnt); break;
+		case '%': resultado = modulo_1(operando_derecha, operando_izquierda, clnt); break;
 		default: printf("Operador no válido\n. Válidos: +, -, *, /"); exit(1); break;
 	}
 
@@ -55,5 +57,5 @@ main (int argc, char *argv[])
 
 	host = argv[1];
 	calculadora_1 (host, atoi(argv[2]), *argv[3], atoi(argv[4]));
-exit (0);
+	exit (0);
 }
