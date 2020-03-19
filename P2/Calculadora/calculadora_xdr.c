@@ -6,6 +6,27 @@
 #include "calculadora.h"
 
 bool_t
+xdr_t_vector (XDR *xdrs, t_vector *objp)
+{
+	register int32_t *buf;
+
+	 if (!xdr_array (xdrs, (char **)&objp->t_vector_val, (u_int *) &objp->t_vector_len, ~0,
+		sizeof (float), (xdrproc_t) xdr_float))
+		 return FALSE;
+	return TRUE;
+}
+
+bool_t
+xdr_suma_2_argument (XDR *xdrs, suma_2_argument *objp)
+{
+	 if (!xdr_t_vector (xdrs, &objp->a))
+		 return FALSE;
+	 if (!xdr_t_vector (xdrs, &objp->b))
+		 return FALSE;
+	return TRUE;
+}
+
+bool_t
 xdr_sumar_1_argument (XDR *xdrs, sumar_1_argument *objp)
 {
 	 if (!xdr_int (xdrs, &objp->a))

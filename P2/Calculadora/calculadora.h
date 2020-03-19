@@ -14,6 +14,17 @@ extern "C" {
 #endif
 
 
+typedef struct {
+	u_int t_vector_len;
+	float *t_vector_val;
+} t_vector;
+
+struct suma_2_argument {
+	t_vector a;
+	t_vector b;
+};
+typedef struct suma_2_argument suma_2_argument;
+
 struct sumar_1_argument {
 	int a;
 	int b;
@@ -51,6 +62,20 @@ struct modulo_1_argument {
 typedef struct modulo_1_argument modulo_1_argument;
 
 #define CALCULADORA 0x20000001
+#define CALCULADORA2 2
+
+#if defined(__STDC__) || defined(__cplusplus)
+#define SUMA 1
+extern  t_vector * suma_2(t_vector , t_vector , CLIENT *);
+extern  t_vector * suma_2_svc(t_vector , t_vector , struct svc_req *);
+extern int calculadora_2_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
+
+#else /* K&R C */
+#define SUMA 1
+extern  t_vector * suma_2();
+extern  t_vector * suma_2_svc();
+extern int calculadora_2_freeresult ();
+#endif /* K&R C */
 #define CALCULADORA1 1
 
 #if defined(__STDC__) || defined(__cplusplus)
@@ -99,6 +124,8 @@ extern int calculadora_1_freeresult ();
 /* the xdr functions */
 
 #if defined(__STDC__) || defined(__cplusplus)
+extern  bool_t xdr_t_vector (XDR *, t_vector*);
+extern  bool_t xdr_suma_2_argument (XDR *, suma_2_argument*);
 extern  bool_t xdr_sumar_1_argument (XDR *, sumar_1_argument*);
 extern  bool_t xdr_restar_1_argument (XDR *, restar_1_argument*);
 extern  bool_t xdr_multp_1_argument (XDR *, multp_1_argument*);
@@ -107,6 +134,8 @@ extern  bool_t xdr_power_1_argument (XDR *, power_1_argument*);
 extern  bool_t xdr_modulo_1_argument (XDR *, modulo_1_argument*);
 
 #else /* K&R C */
+extern bool_t xdr_t_vector ();
+extern bool_t xdr_suma_2_argument ();
 extern bool_t xdr_sumar_1_argument ();
 extern bool_t xdr_restar_1_argument ();
 extern bool_t xdr_multp_1_argument ();

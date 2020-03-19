@@ -7,6 +7,21 @@
 #include "calculadora.h"
 #include <math.h>
 
+t_vector *
+suma_2_svc(t_vector a, t_vector b,  struct svc_req *rqstp)
+{
+	static t_vector  result;
+	result.t_vector_len = a.t_vector_len;
+	result.t_vector_val = malloc(a.t_vector_len*sizeof(float));
+	
+	for(int i = 0; i < result.t_vector_len; i++){
+		result.t_vector_val[i] = a.t_vector_val[i] + b.t_vector_val[i];
+		printf("%lf ", result.t_vector_val[i]);
+	}
+
+	return &result;
+}
+
 int *
 sumar_1_svc(int a, int b,  struct svc_req *rqstp)
 {

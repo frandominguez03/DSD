@@ -8,7 +8,13 @@
     Compilación: rpcgen -NCa calculadora.x
 */
 
+typedef float t_vector<>;
+
 program CALCULADORA {
+    version CALCULADORA2 {
+        t_vector SUMA(t_vector a, t_vector b) = 1;
+    } = 2;
+
     version CALCULADORA1 {
         int SUMAR (int a, int b) = 1;
         int RESTAR(int a, int b) = 2;

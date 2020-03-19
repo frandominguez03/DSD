@@ -16,6 +16,12 @@
 #define SIG_PF void(*)(int)
 #endif
 
+static t_vector *
+_suma_2 (suma_2_argument *argp, struct svc_req *rqstp)
+{
+	return (suma_2_svc(argp->a, argp->b, rqstp));
+}
+
 static int *
 _sumar_1 (sumar_1_argument *argp, struct svc_req *rqstp)
 {
@@ -50,6 +56,47 @@ static int *
 _modulo_1 (modulo_1_argument *argp, struct svc_req *rqstp)
 {
 	return (modulo_1_svc(argp->a, argp->b, rqstp));
+}
+
+static void
+calculadora_2(struct svc_req *rqstp, register SVCXPRT *transp)
+{
+	union {
+		suma_2_argument suma_2_arg;
+	} argument;
+	char *result;
+	xdrproc_t _xdr_argument, _xdr_result;
+	char *(*local)(char *, struct svc_req *);
+
+	switch (rqstp->rq_proc) {
+	case NULLPROC:
+		(void) svc_sendreply (transp, (xdrproc_t) xdr_void, (char *)NULL);
+		return;
+
+	case SUMA:
+		_xdr_argument = (xdrproc_t) xdr_suma_2_argument;
+		_xdr_result = (xdrproc_t) xdr_t_vector;
+		local = (char *(*)(char *, struct svc_req *)) _suma_2;
+		break;
+
+	default:
+		svcerr_noproc (transp);
+		return;
+	}
+	memset ((char *)&argument, 0, sizeof (argument));
+	if (!svc_getargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {
+		svcerr_decode (transp);
+		return;
+	}
+	result = (*local)((char *)&argument, rqstp);
+	if (result != NULL && !svc_sendreply(transp, (xdrproc_t) _xdr_result, result)) {
+		svcerr_systemerr (transp);
+	}
+	if (!svc_freeargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {
+		fprintf (stderr, "%s", "unable to free arguments");
+		exit (1);
+	}
+	return;
 }
 
 static void
@@ -133,11 +180,16 @@ main (int argc, char **argv)
 {
 	register SVCXPRT *transp;
 
+	pmap_unset (CALCULADORA, CALCULADORA2);
 	pmap_unset (CALCULADORA, CALCULADORA1);
 
 	transp = svcudp_create(RPC_ANYSOCK);
 	if (transp == NULL) {
 		fprintf (stderr, "%s", "cannot create udp service.");
+		exit(1);
+	}
+	if (!svc_register(transp, CALCULADORA, CALCULADORA2, calculadora_2, IPPROTO_UDP)) {
+		fprintf (stderr, "%s", "unable to register (CALCULADORA, CALCULADORA2, udp).");
 		exit(1);
 	}
 	if (!svc_register(transp, CALCULADORA, CALCULADORA1, calculadora_1, IPPROTO_UDP)) {
@@ -148,6 +200,10 @@ main (int argc, char **argv)
 	transp = svctcp_create(RPC_ANYSOCK, 0, 0);
 	if (transp == NULL) {
 		fprintf (stderr, "%s", "cannot create tcp service.");
+		exit(1);
+	}
+	if (!svc_register(transp, CALCULADORA, CALCULADORA2, calculadora_2, IPPROTO_TCP)) {
+		fprintf (stderr, "%s", "unable to register (CALCULADORA, CALCULADORA2, tcp).");
 		exit(1);
 	}
 	if (!svc_register(transp, CALCULADORA, CALCULADORA1, calculadora_1, IPPROTO_TCP)) {

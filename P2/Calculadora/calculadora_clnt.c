@@ -9,6 +9,23 @@
 /* Default timeout can be changed using clnt_control() */
 static struct timeval TIMEOUT = { 25, 0 };
 
+t_vector *
+suma_2(t_vector a, t_vector b,  CLIENT *clnt)
+{
+	suma_2_argument arg;
+	static t_vector clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	arg.a = a;
+	arg.b = b;
+	if (clnt_call (clnt, SUMA, (xdrproc_t) xdr_suma_2_argument, (caddr_t) &arg,
+		(xdrproc_t) xdr_t_vector, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
+
 int *
 sumar_1(int a, int b,  CLIENT *clnt)
 {

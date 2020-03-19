@@ -8,13 +8,54 @@
 
 
 void
+calculadora_2(char *host, t_vector v1, char operador, t_vector v2)
+{
+	CLIENT *clnt;
+	t_vector  *result_1;
+
+	#ifndef	DEBUG
+		clnt = clnt_create (host, CALCULADORA, CALCULADORA2, "tcp");
+		if (clnt == NULL) {
+			clnt_pcreateerror (host);
+			exit (1);
+		}
+	#endif	/* DEBUG */
+
+	switch(operador) {
+		case '+': result_1 = suma_2(v1, v2, clnt); break;
+		default: printf("Operador de vectores no válido\n Válidos: +"); exit(1); break;
+	}
+
+	if (result_1 == (t_vector *) NULL) {
+		clnt_perror (clnt, "call failed");
+		exit(1);
+	}
+
+	/* Resultado */
+	for(int i = 0; i < 4; i++) {
+		printf("%lf + %lf, ", v1.t_vector_val[i], v2.t_vector_val[i]);
+	}
+
+	printf("= ");
+	for(int i = 0; i < 4; i++) {
+		printf("%lf ", result_1->t_vector_val[i]);
+	}
+	printf("\n");
+
+	#ifndef	DEBUG
+		clnt_destroy (clnt);
+	#endif	 /* DEBUG */
+}
+
+
+void
 calculadora_1(char *host, int operando_derecha, char operador, int operando_izquierda)
 {
 	CLIENT *clnt;
 	int  *resultado;
 
 	#ifndef	DEBUG
-		clnt = clnt_create (host, CALCULADORA, CALCULADORA1, "udp");
+		clnt = clnt_create (host, CALCULADORA, CALCULADORA1, "tcp");
 		if (clnt == NULL) {
 			clnt_pcreateerror (host);
 			exit (1);
@@ -37,7 +78,7 @@ calculadora_1(char *host, int operando_derecha, char operador, int operando_izqu
 	}
 
 	/* Resultado */
-	printf("%i %c %i = %d", operando_derecha, operador, operando_izquierda, *resultado);
+	printf("%i %c %i = %d\n", operando_derecha, operador, operando_izquierda, *resultado);
 
 	#ifndef	DEBUG
 		clnt_destroy (clnt);
@@ -50,12 +91,56 @@ main (int argc, char *argv[])
 {
 	char *host;
 
-	if (argc != 5) {
-		printf ("Parámetros erróneos: ./<programa> <maquina> <entero> <operador> <entero>\n");
+	if (argc < 5 || argc > 6) {
+		printf ("Parámetros erróneos: ./<programa> <maquina> <entero> <operador> <entero> o\n" "./<programa> <maquina> vector <operacion> <archivo1> <archivo2>\n");
 		exit (1);
 	}
 
 	host = argv[1];
-	calculadora_1 (host, atoi(argv[2]), *argv[3], atoi(argv[4]));
+
+	// Si tenemos 5 argumentos, es una operación con números normales
+	if(argc == 5) {
+		calculadora_1 (host, atoi(argv[2]), *argv[3], atoi(argv[4]));
+	}
+
+	// Si tenemos 6 argumentos, es una operación con vector
+	if(argc == 6) {
+		FILE *vector1, *vector2;
+		t_vector v1, v2;
+		vector1 = fopen(argv[3], "r");
+		vector2 = fopen(argv[5], "r");
+
+		if(vector1 == NULL || vector2 == NULL){
+			exit(1);
+		}
+
+		int i = 0;
+		v1.t_vector_len = 4;
+		v1.t_vector_val = malloc(4*sizeof(int));
+
+		for(i = 0; i < 4; i++){
+			if(fscanf(vector1, "%f", &v1.t_vector_val[i]) != 1){
+				exit(1);
+			}
+		}
+
+		fclose(vector1);
+
+		int j = 0;
+		v2.t_vector_len = 4;
+		v2.t_vector_val = malloc(4*sizeof(int));
+
+		for(j = 0; j < 4; j++){
+			if(fscanf(vector2, "%f", &v2.t_vector_val[j]) != 1){
+				exit(1);
+			}
+		}
+
+		fclose(vector2);
+
+		calculadora_2 (host, v1, *argv[4], v2);
+	}
+
+	
 	exit (0);
 }
