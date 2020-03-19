@@ -12,7 +12,10 @@ typedef float t_vector<>;
 
 program CALCULADORA {
     version CALCULADORA2 {
-        t_vector SUMA(t_vector a, t_vector b) = 1;
+        t_vector SUMA (t_vector a, t_vector b) = 1;
+        t_vector RESTA(t_vector a, t_vector b) = 2;
+        t_vector MULTP(t_vector a, t_vector b) = 3;
+        t_vector PRODV(t_vector a, t_vector b) = 4;
     } = 2;
 
     version CALCULADORA1 {

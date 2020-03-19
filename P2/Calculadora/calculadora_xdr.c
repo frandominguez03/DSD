@@ -27,6 +27,36 @@ xdr_suma_2_argument (XDR *xdrs, suma_2_argument *objp)
 }
 
 bool_t
+xdr_resta_2_argument (XDR *xdrs, resta_2_argument *objp)
+{
+	 if (!xdr_t_vector (xdrs, &objp->a))
+		 return FALSE;
+	 if (!xdr_t_vector (xdrs, &objp->b))
+		 return FALSE;
+	return TRUE;
+}
+
+bool_t
+xdr_multp_2_argument (XDR *xdrs, multp_2_argument *objp)
+{
+	 if (!xdr_t_vector (xdrs, &objp->a))
+		 return FALSE;
+	 if (!xdr_t_vector (xdrs, &objp->b))
+		 return FALSE;
+	return TRUE;
+}
+
+bool_t
+xdr_prodv_2_argument (XDR *xdrs, prodv_2_argument *objp)
+{
+	 if (!xdr_t_vector (xdrs, &objp->a))
+		 return FALSE;
+	 if (!xdr_t_vector (xdrs, &objp->b))
+		 return FALSE;
+	return TRUE;
+}
+
+bool_t
 xdr_sumar_1_argument (XDR *xdrs, sumar_1_argument *objp)
 {
 	 if (!xdr_int (xdrs, &objp->a))

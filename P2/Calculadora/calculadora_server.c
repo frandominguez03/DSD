@@ -16,8 +16,49 @@ suma_2_svc(t_vector a, t_vector b,  struct svc_req *rqstp)
 	
 	for(int i = 0; i < result.t_vector_len; i++){
 		result.t_vector_val[i] = a.t_vector_val[i] + b.t_vector_val[i];
-		printf("%lf ", result.t_vector_val[i]);
 	}
+
+	return &result;
+}
+
+t_vector *
+resta_2_svc(t_vector a, t_vector b,  struct svc_req *rqstp)
+{
+	static t_vector  result;
+	result.t_vector_len = a.t_vector_len;
+	result.t_vector_val = malloc(a.t_vector_len*sizeof(float));
+	
+	for(int i = 0; i < result.t_vector_len; i++){
+		result.t_vector_val[i] = a.t_vector_val[i] - b.t_vector_val[i];
+	}
+
+	return &result;
+}
+
+t_vector *
+multp_2_svc(t_vector a, t_vector b,  struct svc_req *rqstp)
+{
+	static t_vector  result;
+	result.t_vector_len = a.t_vector_len;
+	result.t_vector_val = malloc(a.t_vector_len*sizeof(float));
+	
+	for(int i = 0; i < result.t_vector_len; i++){
+		result.t_vector_val[i] = a.t_vector_val[i] * b.t_vector_val[i];
+	}
+
+	return &result;
+}
+
+t_vector *
+prodv_2_svc(t_vector a, t_vector b,  struct svc_req *rqstp)
+{
+	static t_vector  result;
+	result.t_vector_len = 3;
+	result.t_vector_val = malloc(3*sizeof(float));
+	
+	result.t_vector_val[0] = (a.t_vector_val[1]*b.t_vector_val[2])-(a.t_vector_val[2]*b.t_vector_val[1]);
+	result.t_vector_val[1] = (a.t_vector_val[2]*b.t_vector_val[0])-(a.t_vector_val[0]*b.t_vector_val[2]);
+	result.t_vector_val[2] = (a.t_vector_val[0]*b.t_vector_val[1])-(a.t_vector_val[1]*b.t_vector_val[0]);
 
 	return &result;
 }

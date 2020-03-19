@@ -25,6 +25,24 @@ struct suma_2_argument {
 };
 typedef struct suma_2_argument suma_2_argument;
 
+struct resta_2_argument {
+	t_vector a;
+	t_vector b;
+};
+typedef struct resta_2_argument resta_2_argument;
+
+struct multp_2_argument {
+	t_vector a;
+	t_vector b;
+};
+typedef struct multp_2_argument multp_2_argument;
+
+struct prodv_2_argument {
+	t_vector a;
+	t_vector b;
+};
+typedef struct prodv_2_argument prodv_2_argument;
+
 struct sumar_1_argument {
 	int a;
 	int b;
@@ -68,12 +86,30 @@ typedef struct modulo_1_argument modulo_1_argument;
 #define SUMA 1
 extern  t_vector * suma_2(t_vector , t_vector , CLIENT *);
 extern  t_vector * suma_2_svc(t_vector , t_vector , struct svc_req *);
+#define RESTA 2
+extern  t_vector * resta_2(t_vector , t_vector , CLIENT *);
+extern  t_vector * resta_2_svc(t_vector , t_vector , struct svc_req *);
+#define MULTP 3
+extern  t_vector * multp_2(t_vector , t_vector , CLIENT *);
+extern  t_vector * multp_2_svc(t_vector , t_vector , struct svc_req *);
+#define PRODV 4
+extern  t_vector * prodv_2(t_vector , t_vector , CLIENT *);
+extern  t_vector * prodv_2_svc(t_vector , t_vector , struct svc_req *);
 extern int calculadora_2_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 
 #else /* K&R C */
 #define SUMA 1
 extern  t_vector * suma_2();
 extern  t_vector * suma_2_svc();
+#define RESTA 2
+extern  t_vector * resta_2();
+extern  t_vector * resta_2_svc();
+#define MULTP 3
+extern  t_vector * multp_2();
+extern  t_vector * multp_2_svc();
+#define PRODV 4
+extern  t_vector * prodv_2();
+extern  t_vector * prodv_2_svc();
 extern int calculadora_2_freeresult ();
 #endif /* K&R C */
 #define CALCULADORA1 1
@@ -85,7 +121,6 @@ extern  int * sumar_1_svc(int , int , struct svc_req *);
 #define RESTAR 2
 extern  int * restar_1(int , int , CLIENT *);
 extern  int * restar_1_svc(int , int , struct svc_req *);
-#define MULTP 3
 extern  int * multp_1(int , int , CLIENT *);
 extern  int * multp_1_svc(int , int , struct svc_req *);
 #define DIVID 4
@@ -106,7 +141,6 @@ extern  int * sumar_1_svc();
 #define RESTAR 2
 extern  int * restar_1();
 extern  int * restar_1_svc();
-#define MULTP 3
 extern  int * multp_1();
 extern  int * multp_1_svc();
 #define DIVID 4
@@ -126,6 +160,9 @@ extern int calculadora_1_freeresult ();
 #if defined(__STDC__) || defined(__cplusplus)
 extern  bool_t xdr_t_vector (XDR *, t_vector*);
 extern  bool_t xdr_suma_2_argument (XDR *, suma_2_argument*);
+extern  bool_t xdr_resta_2_argument (XDR *, resta_2_argument*);
+extern  bool_t xdr_multp_2_argument (XDR *, multp_2_argument*);
+extern  bool_t xdr_prodv_2_argument (XDR *, prodv_2_argument*);
 extern  bool_t xdr_sumar_1_argument (XDR *, sumar_1_argument*);
 extern  bool_t xdr_restar_1_argument (XDR *, restar_1_argument*);
 extern  bool_t xdr_multp_1_argument (XDR *, multp_1_argument*);
@@ -136,6 +173,9 @@ extern  bool_t xdr_modulo_1_argument (XDR *, modulo_1_argument*);
 #else /* K&R C */
 extern bool_t xdr_t_vector ();
 extern bool_t xdr_suma_2_argument ();
+extern bool_t xdr_resta_2_argument ();
+extern bool_t xdr_multp_2_argument ();
+extern bool_t xdr_prodv_2_argument ();
 extern bool_t xdr_sumar_1_argument ();
 extern bool_t xdr_restar_1_argument ();
 extern bool_t xdr_multp_1_argument ();

@@ -22,6 +22,24 @@ _suma_2 (suma_2_argument *argp, struct svc_req *rqstp)
 	return (suma_2_svc(argp->a, argp->b, rqstp));
 }
 
+static t_vector *
+_resta_2 (resta_2_argument *argp, struct svc_req *rqstp)
+{
+	return (resta_2_svc(argp->a, argp->b, rqstp));
+}
+
+static t_vector *
+_multp_2 (multp_2_argument *argp, struct svc_req *rqstp)
+{
+	return (multp_2_svc(argp->a, argp->b, rqstp));
+}
+
+static t_vector *
+_prodv_2 (prodv_2_argument *argp, struct svc_req *rqstp)
+{
+	return (prodv_2_svc(argp->a, argp->b, rqstp));
+}
+
 static int *
 _sumar_1 (sumar_1_argument *argp, struct svc_req *rqstp)
 {
@@ -63,6 +81,9 @@ calculadora_2(struct svc_req *rqstp, register SVCXPRT *transp)
 {
 	union {
 		suma_2_argument suma_2_arg;
+		resta_2_argument resta_2_arg;
+		multp_2_argument multp_2_arg;
+		prodv_2_argument prodv_2_arg;
 	} argument;
 	char *result;
 	xdrproc_t _xdr_argument, _xdr_result;
@@ -77,6 +98,24 @@ calculadora_2(struct svc_req *rqstp, register SVCXPRT *transp)
 		_xdr_argument = (xdrproc_t) xdr_suma_2_argument;
 		_xdr_result = (xdrproc_t) xdr_t_vector;
 		local = (char *(*)(char *, struct svc_req *)) _suma_2;
+		break;
+
+	case RESTA:
+		_xdr_argument = (xdrproc_t) xdr_resta_2_argument;
+		_xdr_result = (xdrproc_t) xdr_t_vector;
+		local = (char *(*)(char *, struct svc_req *)) _resta_2;
+		break;
+
+	case MULTP:
+		_xdr_argument = (xdrproc_t) xdr_multp_2_argument;
+		_xdr_result = (xdrproc_t) xdr_t_vector;
+		local = (char *(*)(char *, struct svc_req *)) _multp_2;
+		break;
+
+	case PRODV:
+		_xdr_argument = (xdrproc_t) xdr_prodv_2_argument;
+		_xdr_result = (xdrproc_t) xdr_t_vector;
+		local = (char *(*)(char *, struct svc_req *)) _prodv_2;
 		break;
 
 	default:

@@ -26,6 +26,57 @@ suma_2(t_vector a, t_vector b,  CLIENT *clnt)
 	return (&clnt_res);
 }
 
+t_vector *
+resta_2(t_vector a, t_vector b,  CLIENT *clnt)
+{
+	resta_2_argument arg;
+	static t_vector clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	arg.a = a;
+	arg.b = b;
+	if (clnt_call (clnt, RESTA, (xdrproc_t) xdr_resta_2_argument, (caddr_t) &arg,
+		(xdrproc_t) xdr_t_vector, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
+
+t_vector *
+multp_2(t_vector a, t_vector b,  CLIENT *clnt)
+{
+	multp_2_argument arg;
+	static t_vector clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	arg.a = a;
+	arg.b = b;
+	if (clnt_call (clnt, MULTP, (xdrproc_t) xdr_multp_2_argument, (caddr_t) &arg,
+		(xdrproc_t) xdr_t_vector, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
+
+t_vector *
+prodv_2(t_vector a, t_vector b,  CLIENT *clnt)
+{
+	prodv_2_argument arg;
+	static t_vector clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	arg.a = a;
+	arg.b = b;
+	if (clnt_call (clnt, PRODV, (xdrproc_t) xdr_prodv_2_argument, (caddr_t) &arg,
+		(xdrproc_t) xdr_t_vector, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
+
 int *
 sumar_1(int a, int b,  CLIENT *clnt)
 {

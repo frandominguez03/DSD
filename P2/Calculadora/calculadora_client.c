@@ -6,7 +6,6 @@
 
 #include "calculadora.h"
 
-
 void
 calculadora_2(char *host, t_vector v1, char operador, t_vector v2)
 {
@@ -23,6 +22,9 @@ calculadora_2(char *host, t_vector v1, char operador, t_vector v2)
 
 	switch(operador) {
 		case '+': result_1 = suma_2(v1, v2, clnt); break;
+		case '-': result_1 = resta_2(v1, v2, clnt); break;
+		case 'x': result_1 = multp_2(v1, v2, clnt); break;
+		case 'p': result_1 = prodv_2(v1, v2, clnt); break;
 		default: printf("Operador de vectores no válido\n Válidos: +"); exit(1); break;
 	}
 
@@ -32,15 +34,30 @@ calculadora_2(char *host, t_vector v1, char operador, t_vector v2)
 	}
 
 	/* Resultado */
-	for(int i = 0; i < 4; i++) {
-		printf("%lf + %lf, ", v1.t_vector_val[i], v2.t_vector_val[i]);
+	if(operador != 'p'){
+		for(int i = 0; i < 4; i++) {
+			printf("%lf %c %lf, ", v1.t_vector_val[i], operador, v2.t_vector_val[i]);
+		}
+
+		printf("= ");
+		for(int i = 0; i < 4; i++) {
+			printf("%lf ", result_1->t_vector_val[i]);
+		}
+		printf("\n");
 	}
 
-	printf("= ");
-	for(int i = 0; i < 4; i++) {
-		printf("%lf ", result_1->t_vector_val[i]);
+	else{
+		for(int i = 0; i < 3; i++) {
+			printf("%lf %c %lf, ", v1.t_vector_val[i], 'PV', v2.t_vector_val[i]);
+		}
+
+		printf("= ");
+		for(int i = 0; i < 3; i++) {
+			printf("%lf ", result_1->t_vector_val[i]);
+		}
+		printf("\n");
 	}
-	printf("\n");
+	
 
 	#ifndef	DEBUG
 		clnt_destroy (clnt);
@@ -92,7 +109,7 @@ main (int argc, char *argv[])
 	char *host;
 
 	if (argc < 5 || argc > 6) {
-		printf ("Parámetros erróneos: ./<programa> <maquina> <entero> <operador> <entero> o\n" "./<programa> <maquina> vector <operacion> <archivo1> <archivo2>\n");
+		printf ("Parámetros erróneos: ./<programa> <maquina> <entero> <operador> <entero> o\n" "./<programa> <maquina> vector <archivo1> <operacion> <archivo2>\n");
 		exit (1);
 	}
 
