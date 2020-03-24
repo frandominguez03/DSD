@@ -1,8 +1,6 @@
 import glob
 import sys
 
-from calculadora import Calculadora
-
 from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol

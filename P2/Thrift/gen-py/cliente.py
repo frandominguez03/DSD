@@ -22,6 +22,10 @@ a4 = [5, 7, 5, 4]
 v1 = [3, 1, 7]
 v2 = [7, 4, 4]
 
+# Matrices
+m1 = [[3, 1, 7], [8, 3, 6], [8, 5, 2]]
+m2 = [[2, 5, 7], [4, 9, 3], [1, 9, 7]]
+
 print('Hacemos ping al servidor')
 client.ping()
 
@@ -59,6 +63,12 @@ resultado = client.productovec(v1, v2)
 print(v1)
 print(' PV ')
 print(v2)
+print(resultado)
+
+resultado = client.sumamatrices(m1, m2)
+print(m1)
+print(' + ')
+print(m2)
 print(resultado)
 
 transport.close()
