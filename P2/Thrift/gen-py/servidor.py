@@ -83,6 +83,10 @@ class CalculadoraHandler:
         return vec3
 
     def sumamatrices(self, m1, m2):
+	print('Suma de ')
+        print(m1)
+        print(' con ')
+        print(m2)
         result = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
         for i in range(len(m1)):
             for j in range(len(m1[0])):
