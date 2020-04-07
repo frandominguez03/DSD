@@ -1,25 +1,26 @@
-import java.rmi.RemoteException;
+import java.net.MalformedURLException;
+import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
-import java.rmi.Naming;
+import java.rmi.server.*;
 
 public class Servidor2 {
     public static void main(String[] args) {
-        if (System.getSecurityManager() == null) {
-            System.setSecurityManager(new SecurityManager());
-        }
-        
-        try {
-            String nombreServidor = "donaciones2", nombreReplica = "donaciones1";
-            int puerto = 1100;
-            Registry reg = LocateRegistry.createRegistry(puerto);
-            Donaciones donaciones2 = new Donaciones(nombreServidor, nombreReplica, puerto);
-            Naming.rebind(nombreServidor, donaciones2);
-            System.out.println("Servidor " + nombreServidor + " lanzado.");
-        } catch (Exception e) {
-            System.err.println("Exception:");
-            e.printStackTrace();
+
+    // Crea e instala el gestor de seguridad
+    if (System.getSecurityManager() == null) {
+        System.setSecurityManager(new SecurityManager());
+    }
+
+    try {
+        // Crea una instancia de donaciones
+        Registry reg = LocateRegistry.createRegistry(1100);
+        Donaciones donaciones2 = new Donaciones(2);
+        Naming.rebind("ddonaciones2", donaciones2);
+        System.out.println("Servidor Donaciones 2 preparado");
+
+        } catch (RemoteException | MalformedURLException e) {
+            System.out.println("Exception: " + e.getMessage());
         }
     }
 }

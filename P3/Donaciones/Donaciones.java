@@ -1,140 +1,90 @@
-import java.rmi.RemoteException;
-import java.rmi.NotBoundException;
+import java.rmi.*;
+import java.rmi.server.UnicastRemoteObject;
+import java.net.MalformedURLException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
 public class Donaciones extends UnicastRemoteObject implements IDonaciones {
-    private ArrayList<Entidad> entidades = new ArrayList<Entidad>();
+    private ArrayList<Entidad> entidades = new ArrayList<>();
     private double subtotal;
-    private String nombreServidor;
-    private String nombreReplica;
-    private int puerto;
 
-    /* Constructor */
-    public Donaciones(String nombreServidor, String nombreReplica, int puerto) throws RemoteException {
-        this.nombreServidor = nombreServidor;
-        this.nombreReplica = nombreReplica;
-        this.puerto = puerto;
+    /*
+    * Servidor que hostea el objeto
+    * 1: Servidor 1
+    * 2: Servidor 2
+    */
+    private int servidor;
+    private String nombreReplica;
+
+    public Donaciones(int servidor) throws RemoteException {
+        this.servidor = servidor;
+
+        if(this.servidor == 1)
+            this.nombreReplica = "ddonaciones2";
+        else
+            this.nombreReplica = "ddonaciones1";
     }
 
-    /* Registrar una entidad */
     @Override
-    public boolean registroEntidad(String nombre, String codigoAcceso) {
-        /* Comprobamos si la entidad está registrada en esta réplica */
-        if(this.entidadRegistrada(nombre))
-            return false;
-        
-        /* En caso contrario, debemos buscar en la otra réplica */
+    public boolean registroEntidad(String nombre, String codigoAcceso) throws RemoteException {
+        /* Comprobamos que el cliente no exista en la replica */
         IDonaciones replica = this.getReplica(this.nombreReplica);
-
+        
         if(replica != null) {
-            try {
-                if(replica.entidadRegistrada(nombre))
-                    return false;    
-            
-                /* Ya sabemos que no está registrado en ninguna réplica, ahora tenemos que elegir en cuál registrarla */
-                if(this.getNumeroEntidades() <= replica.getNumeroEntidades())
-                    this.addEntidad(new Entidad(nombre, codigoAcceso));
-                
-                else 
-                    replica.addEntidad(new Entidad(nombre, codigoAcceso));
-                
-                System.out.println("Entidad " + nombre + " registrada con éxito");
-
-            } catch(RemoteException e) {
-                System.err.println("Exception:");
-                e.printStackTrace();
-            }
+            if(replica.entidadRegistrada(nombre) != null)
+                return false;
         }
 
+        if(this.entidadRegistrada(nombre) != null)
+            return false;
+        
+        this.entidades.add(new Entidad(nombre, codigoAcceso));
+        System.out.println("Entidad " + nombre + " registrada con éxito");
         return true;
     }
 
-    /* Hacer un depósito */
     @Override
-    public boolean deposito(Entidad ent, double cantidad) {
-        Entidad entLocal = null;
-        boolean exito = false;
+    public boolean donar(String nombre, int cantidad) throws RemoteException {
+        Entidad entLocal = this.entidadRegistrada(nombre);
 
-        for(int i = 0; i < this.entidades.size(); i++) {
-            if(this.entidades.get(i).equals(ent)) {
-                entLocal = this.entidades.get(i);
-                exito = true;
-            }
-        }
-
-        if(exito) {
+        if(entLocal != null) {
             this.subtotal += cantidad;
             entLocal.incrementarTotal(cantidad);
-            System.out.println("Entidad " + entLocal.getNombre() + " ha donado " + cantidad + "€");
-        }
-        
-        return exito;
-    }
-
-    /* Comprobar si una entidad está registrada en la réplica */
-    @Override
-    public boolean entidadRegistrada(String nombre) {
-        for(int i = 0; i < this.entidades.size(); i++) {
-            if(this.entidades.get(i).getNombre() == nombre) {
-                return true;
-            }
+            System.out.println("Entidad " + nombre + " ha donado " + cantidad + "€");
+            return true;
         }
 
         return false;
     }
 
-    /* Obtener subtotal de la réplica */
     @Override
-    public double getSubtotal() {
-        return this.subtotal;
-    }
-
-    /* Obtener total de todas las réplicas */
-    @Override
-    public double getTotal() {
-        IDonaciones replica = this.getReplica(this.nombreReplica);
-
-        if(replica != null) {
-            try {
-                return this.subtotal + replica.getSubtotal();
-            } catch(RemoteException e) {
-                System.err.println("Exception:");
-                e.printStackTrace();
+    public Entidad entidadRegistrada(String nombre) throws RemoteException {
+        for(int i = 0; i < this.entidades.size(); i++) {
+            if(this.entidades.get(i).getNombre().equals(nombre)) {
+                return this.entidades.get(i);
             }
         }
 
-        return 0;
+        return null;
     }
 
-    /* Obtener la réplica correspondiente */
-    @Override
-    public IDonaciones getReplica(String nombreReplica) {
+    public IDonaciones getReplica(String nombre) throws RemoteException {
         IDonaciones replica = null;
-        String host = "localhost";
 
         try {
-            Registry mireg = LocateRegistry.getRegistry(host, this.puerto);
-            replica = (IDonaciones)mireg.lookup(nombreReplica);
-        } catch(NotBoundException | RemoteException e) {
-            System.err.println("Exception:");
-            e.printStackTrace();
+            int puerto;
+            if(this.nombreReplica == "ddonaciones1")
+                puerto = 1099;
+            else
+                puerto = 1100;
+
+            Registry mireg = LocateRegistry.getRegistry("localhost", 1100);
+            replica = (IDonaciones)mireg.lookup("ddonaciones2");
+        } catch (NotBoundException | RemoteException e) {
+            System.out.println("Exception: " + e.getMessage());
         }
 
         return replica;
-    }
-    
-    /* Obtener el número de entidades registrados en esta réplica */
-    @Override
-    public int getNumeroEntidades() {
-        return this.entidades.size();
-    }
-
-    /* Método para añadir una entidad a la lista de entidades */
-    @Override
-    public void addEntidad(Entidad ent) {
-        this.entidades.add(ent);
     }
 }

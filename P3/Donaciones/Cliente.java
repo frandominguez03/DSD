@@ -1,27 +1,25 @@
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
+import java.net.MalformedURLException;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.*;
 import java.rmi.registry.Registry;
-import java.util.Scanner;
 
 public class Cliente {
     public static void main(String[] args) {
-        String servidor1 = "donaciones1";
-        Scanner in = new Scanner(System.in);
-
+        // Crea e instala el gestor de seguridad
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new SecurityManager());
         }
 
         try {
-            Registry mireg = LocateRegistry.getRegistry(args[0]);
-            IDonaciones donaciones = (IDonaciones)mireg.lookup(servidor1);
+        // Crea el stub para el cliente especificando el nombre del servidor
 
-            if(donaciones.registroEntidad("Pepe", "123123"))
-                System.out.println("Hola");
-        } catch(NotBoundException | RemoteException e) {
-            System.err.println("Exception:");
-            e.printStackTrace();
+            IDonaciones donaciones = (IDonaciones)Naming.lookup("ddonaciones1");
+            donaciones.registroEntidad("Pepe", "Bien");
+            donaciones.donar("Pepe", 12000);
+        } catch(NotBoundException | RemoteException | MalformedURLException e) {
+            System.err.println("Exception del sistema: " + e);
         }
+        
+        System.exit(0);
     }
 }
