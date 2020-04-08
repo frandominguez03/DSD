@@ -1,4 +1,7 @@
-public class Entidad {
+import java.io.Serializable;
+
+public class Entidad implements Serializable {
+    private static final long serialVersionUID = 1;
     private String nombre;
     private String codigoAcceso;
     private double totalDonado;

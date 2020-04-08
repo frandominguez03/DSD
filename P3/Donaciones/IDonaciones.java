@@ -3,7 +3,12 @@ import java.rmi.RemoteException;
 
 public interface IDonaciones extends Remote {
     boolean registroEntidad(String nombre, String codigoAcceso) throws RemoteException;
-    boolean donar(String nombre, int cantidad) throws RemoteException;
+    boolean donar(String nombre, double cantidad) throws RemoteException;
     Entidad entidadRegistrada(String nombre) throws RemoteException;
-    IDonaciones getReplica(String nombre) throws RemoteException;
+    IDonaciones getReplica() throws RemoteException;
+    int getNumeroEntidades() throws RemoteException;
+    void addEntidad(String nombre, String codigoAcceso) throws RemoteException;
+    void incrementarSubtotal(double cantidad) throws RemoteException;
+    double getSubtotal() throws RemoteException;
+    double getTotal(String nombre) throws RemoteException;
 }

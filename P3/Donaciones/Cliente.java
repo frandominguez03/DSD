@@ -2,20 +2,110 @@ import java.net.MalformedURLException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.*;
 import java.rmi.registry.Registry;
+import java.util.Scanner;
 
 public class Cliente {
     public static void main(String[] args) {
+        String servidor1 = "ddonaciones1";
+        String servidor2 = "ddonaciones2";
+        int servidorEscogido = 0;
+        String newLine = System.getProperty("line.separator");
+        Scanner in = new Scanner(System.in);
+
         // Crea e instala el gestor de seguridad
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new SecurityManager());
         }
 
         try {
-        // Crea el stub para el cliente especificando el nombre del servidor
+            // Crea el stub para el cliente especificando el nombre del servidor
+            IDonaciones donaciones1 = (IDonaciones)Naming.lookup("ddonaciones1");
+            IDonaciones donaciones2 = (IDonaciones)Naming.lookup("ddonaciones2");
+            boolean comienzo = true;
 
-            IDonaciones donaciones = (IDonaciones)Naming.lookup("ddonaciones1");
-            donaciones.registroEntidad("Pepe", "Bien");
-            donaciones.donar("Pepe", 12000);
+            while(comienzo) {
+                System.out.println("Bienvenido al Sistema de Donaciones. Por favor, selecciona una opción:" + newLine +
+                                "   R: Registrarse" + newLine +
+                                "   D: Donar" + newLine +
+                                "   S: Salir");
+            
+                String opcionInicial = in.nextLine();
+                
+                switch(opcionInicial) {
+                    case "R":
+                        System.out.println("Introduzca un nombre para la Entidad: ");
+                        String nombreEntidad = in.nextLine();
+
+                        System.out.println("Introduzca un código de acceso: ");
+                        String codigoAcceso = in.nextLine();
+
+                        System.out.println("¿En qué servidor desea registrarse? (1 o 2): ");
+                        servidorEscogido = Integer.parseInt(in.nextLine());
+
+                        if(servidorEscogido == 1) {
+                            if(donaciones1.registroEntidad(nombreEntidad, codigoAcceso)) {
+                                System.out.println("Registro completado en el servidor " + servidorEscogido);
+                            }
+
+                            else {
+                                System.out.println("La entidad ya está registrada. Pruebe con otro nombre.");
+                            }
+                        }
+
+                        else if(servidorEscogido == 2) {
+                            if(donaciones2.registroEntidad(nombreEntidad, codigoAcceso)) {
+                                System.out.println("Registro completado en el servidor " + servidorEscogido);
+                            }
+
+                            else {
+                                System.out.println("La entidad ya está registrada. Pruebe con otro nombre.");
+                            }
+                        }
+
+                        else {
+                            System.out.println("El número de servidor no es correcto. Debe de ser 1 o 2.");
+                        }
+                    break;
+
+                    case "D":
+                        System.out.println("Menú de Donaciones. Introduzca el nombre de la Entidad: ");
+                        String nombreEntidadDonacion = in.nextLine();
+
+                        System.out.println("Introduzca la cantidad a donar: ");
+
+                        int cantidad = Integer.parseInt(in.nextLine());
+                        while(cantidad < 0.0) {
+                            if(cantidad < 0.0)
+                                System.out.println("La cantidad debe de ser mayor que 0.0€");
+
+                            cantidad = Integer.parseInt(in.nextLine()); 
+                        }
+
+                        if(servidorEscogido == 1) {
+                            if(donaciones1.donar(nombreEntidadDonacion, cantidad)) {
+                                System.out.println("La donación se completado con éxito");
+                            }
+                        }
+
+                        else if(servidorEscogido == 2) {
+                            if(donaciones2.donar(nombreEntidadDonacion, cantidad)) {
+                                System.out.println("Registro completado en el servidor");
+                            }
+                        }
+                    break;
+
+                    case "S":
+                        System.out.println("Saliendo del sistema.");
+                        comienzo = false;
+                    break;
+
+                    default:
+                        System.out.println("La opción no es válida. Pruebe de nuevo.");
+                    break;
+                }
+            }
+
+            
         } catch(NotBoundException | RemoteException | MalformedURLException e) {
             System.err.println("Exception del sistema: " + e);
         }

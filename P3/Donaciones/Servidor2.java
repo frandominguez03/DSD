@@ -14,8 +14,8 @@ public class Servidor2 {
 
     try {
         // Crea una instancia de donaciones
-        Registry reg = LocateRegistry.createRegistry(1100);
-        Donaciones donaciones2 = new Donaciones(2);
+        String nombreReplica = "ddonaciones1";
+        Donaciones donaciones2 = new Donaciones(nombreReplica);
         Naming.rebind("ddonaciones2", donaciones2);
         System.out.println("Servidor Donaciones 2 preparado");
 
