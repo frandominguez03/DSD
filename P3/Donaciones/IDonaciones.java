@@ -10,5 +10,7 @@ public interface IDonaciones extends Remote {
     void addEntidad(String nombre, String codigoAcceso) throws RemoteException;
     void incrementarSubtotal(double cantidad) throws RemoteException;
     double getSubtotal() throws RemoteException;
-    double getTotal(String nombre) throws RemoteException;
+    double getTotal() throws RemoteException;
+    boolean identificarse(String nombre, String codigoAcceso) throws RemoteException;
+    double getTotalEntidad(String nombre) throws RemoteException;
 }

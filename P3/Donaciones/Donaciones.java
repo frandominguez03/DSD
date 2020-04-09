@@ -135,33 +135,95 @@ public class Donaciones extends UnicastRemoteObject implements IDonaciones {
 
     /* Obtener el total donado de todas las réplicas */
     @Override
-    public double getTotal(String nombre) throws RemoteException {
+    public double getTotal() throws RemoteException {
         IDonaciones replica = this.getReplica();
         boolean existeEnReplica = false, existeEnLocal = false;
         
         if(replica != null) {
-            if(replica.entidadRegistrada(nombre) != null)
-                existeEnReplica = true;
-        }
-
-        if(!existeEnReplica) {
-            /* Comprobamos si existe en la réplica local */
-            if(this.entidadRegistrada(nombre) != null)
-                existeEnLocal = true;
-        }
-
-        if(!existeEnReplica && !existeEnLocal) {
-            System.out.println("El cliente " + nombre + " no está registrado en ningún servidor.");
-            return 0.0;
-        }
-
-        if(this.getSubtotal() == 0.0 && replica.getSubtotal() == 0.0) {
-            System.out.println("Aún no se ha realizado ninguna donación");
-            return 0.0;
+            if(this.getSubtotal() == 0.0 && replica.getSubtotal() == 0.0) {
+                System.out.println("Aún no se ha realizado ninguna donación");
+                return 0.0;
+            }
         }
 
         double total = this.getSubtotal() + replica.getSubtotal();
 
         return total;
+    }
+
+    /* Función para identificarse */
+    @Override
+    public boolean identificarse(String nombre, String codigoAcceso) throws RemoteException {
+        IDonaciones replica = this.getReplica();
+        boolean existeEnReplica = false;
+
+        if(replica != null) {
+            /* ¿Está en la réplica? */
+            if(replica.entidadRegistrada(nombre) != null)
+                existeEnReplica = true;
+        }
+
+        /* Si está en la réplica, comprobamos que los datos de inicio de sesión sean válidos */
+        if(existeEnReplica) {
+            Entidad encontrada = replica.entidadRegistrada(nombre);
+
+            if(encontrada.getNombre() == nombre && encontrada.getCodigoAcceso() == codigoAcceso) {
+                return true;
+            }
+        }
+
+        boolean existeLocal = false;
+
+        /* ¿Existe en local? */
+        if(this.entidadRegistrada(nombre) != null)
+            existeLocal = true;
+
+        /* Si está en local, comprobamos que los datos de inicio de sesión sean correctos */
+        if(existeLocal) {
+            Entidad encontrada = this.entidadRegistrada(nombre);
+
+            if(encontrada.getNombre() == nombre && encontrada.getCodigoAcceso() == codigoAcceso) {
+                return true;
+            }
+        }
+
+        /* En cualquier otro caso devolvemos false */
+        return false;
+    }
+
+    /* Función para devolver el total donado por una entidad */
+    @Override
+    public double getTotalEntidad(String nombre) throws RemoteException {
+        IDonaciones replica = this.getReplica();
+        boolean existeEnReplica = false;
+
+        if(replica != null) {
+            /* ¿Está en la réplica? */
+            if(replica.entidadRegistrada(nombre) != null)
+                existeEnReplica = true;
+        }
+
+        /* Si está en la réplica, comprobamos que los datos de inicio de sesión sean válidos */
+        if(existeEnReplica) {
+            Entidad encontrada = replica.entidadRegistrada(nombre);
+
+            return encontrada.getTotalDonado();
+        }
+
+        boolean existeLocal = false;
+
+        /* ¿Existe en local? */
+        if(this.entidadRegistrada(nombre) != null)
+            existeLocal = true;
+
+        /* Si está en local, comprobamos que los datos de inicio de sesión sean correctos */
+        if(existeLocal) {
+            Entidad encontrada = this.entidadRegistrada(nombre);
+
+            return encontrada.getTotalDonado();
+        }
+
+        /* En cualquier otro caso devolvemos -1 */
+        return -1;
     }
 }

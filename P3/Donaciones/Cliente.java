@@ -11,6 +11,7 @@ public class Cliente {
         int servidorEscogido = 0;
         String newLine = System.getProperty("line.separator");
         Scanner in = new Scanner(System.in);
+        boolean isIdentificado = false;
 
         // Crea e instala el gestor de seguridad
         if (System.getSecurityManager() == null) {
@@ -23,10 +24,14 @@ public class Cliente {
             IDonaciones donaciones2 = (IDonaciones)Naming.lookup("ddonaciones2");
             boolean comienzo = true;
 
+            /* Variables para dentro de los bucles */
+            String nombreInicioSesion = "";
+            String codigoInicioSesion = "";
+
             while(comienzo) {
                 System.out.println("Bienvenido al Sistema de Donaciones. Por favor, selecciona una opción:" + newLine +
                                 "   R: Registrarse" + newLine +
-                                "   D: Donar" + newLine +
+                                "   I: Iniciar Sesión" + newLine +
                                 "   S: Salir");
             
                 String opcionInicial = in.nextLine();
@@ -67,41 +72,95 @@ public class Cliente {
                         }
                     break;
 
-                    case "D":
-                        System.out.println("Menú de Donaciones. Introduzca el nombre de la Entidad: ");
-                        String nombreEntidadDonacion = in.nextLine();
+                    case "I":
+                        System.out.println("Menú de Inicio de Sesión. Introduzca su nombre de Entidad: ");
+                        nombreInicioSesion = in.nextLine();
 
-                        System.out.println("Introduzca la cantidad a donar: ");
+                        System.out.println("Introduzca su código de acceso: ");
+                        codigoInicioSesion = in.nextLine();
 
-                        int cantidad = Integer.parseInt(in.nextLine());
-                        while(cantidad < 0.0) {
-                            if(cantidad < 0.0)
-                                System.out.println("La cantidad debe de ser mayor que 0.0€");
-
-                            cantidad = Integer.parseInt(in.nextLine()); 
+                        /* Comprobamos en cualquiera de los dos servidores */
+                        if(donaciones1.identificarse(nombreInicioSesion, codigoInicioSesion)) {
+                            System.out.println("Identificado correctamente. Bienvenido.");
+                            isIdentificado = true;
+                            comienzo = false;
                         }
 
-                        if(servidorEscogido == 1) {
-                            if(donaciones1.donar(nombreEntidadDonacion, cantidad)) {
-                                System.out.println("La donación se completado con éxito");
-                            }
+                        else {
+                            System.out.println("No existe ninguna Entidad con los datos proporcionados. Inténtelo de nuevo.");
+                            isIdentificado = false;
                         }
-
-                        else if(servidorEscogido == 2) {
-                            if(donaciones2.donar(nombreEntidadDonacion, cantidad)) {
-                                System.out.println("Registro completado en el servidor");
-                            }
-                        }
-                    break;
 
                     case "S":
                         System.out.println("Saliendo del sistema.");
                         comienzo = false;
+                        isIdentificado = false;
                     break;
 
                     default:
                         System.out.println("La opción no es válida. Pruebe de nuevo.");
                     break;
+                }
+
+                while(isIdentificado) {
+                    System.out.println("Bienvenido al Sistema de Donaciones. Usted ha Iniciado Sesión. Por favor, selecciona una opción:" + newLine +
+                            "   D: Donar" + newLine +
+                            "   T: Obtener Total Donado" + newLine +
+                            "   E: Obtener donado por Entidad actual" + newLine +
+                            "   S: Salir");
+                    
+                    String opcionIdentificado = in.nextLine();
+
+                    switch(opcionIdentificado) {
+                        case "D":
+                            System.out.println("Menú de Donaciones. Introduzca el nombre de la Entidad: ");
+                            String nombreEntidadDonacion = in.nextLine();
+
+                            System.out.println("Introduzca la cantidad a donar: ");
+
+                            int cantidad = Integer.parseInt(in.nextLine());
+                            while(cantidad < 0.0) {
+                                if(cantidad < 0.0)
+                                    System.out.println("La cantidad debe de ser mayor que 0.0€");
+
+                                cantidad = Integer.parseInt(in.nextLine()); 
+                            }
+
+                            if(servidorEscogido == 1) {
+                                if(donaciones1.donar(nombreEntidadDonacion, cantidad)) {
+                                    System.out.println("La donación se completado con éxito");
+                                }
+                            }
+
+                            else if(servidorEscogido == 2) {
+                                if(donaciones2.donar(nombreEntidadDonacion, cantidad)) {
+                                    System.out.println("Registro completado en el servidor");
+                                }
+                            }
+                        break;
+
+                        case "T":
+                            System.out.println("Obteniendo cantidad total donada por todas las entidades...");
+                            System.out.println("Total donado: " + donaciones1.getTotal() + "€");
+                        break;
+
+                        case "E":
+                            System.out.println("Obteniendo el total donado por la Entidad " + nombreInicioSesion);
+                            if(donaciones1.getTotalEntidad(nombreInicioSesion) != -1) {
+                                System.out.println("La entidad " + nombreInicioSesion + " ha donado" + donaciones1.getTotalEntidad(nombreInicioSesion));
+                            }
+
+                            else {
+                                System.out.println("Ha ocurrido un error al obtener los datos. Inténtelo de nuevo");
+                            }
+                        break;
+
+                        case "S":
+                            System.out.println("Saliendo de la sesión iniciada...");
+                            isIdentificado = false;
+                            comienzo = true;
+                        break;
+                    }    
                 }
             }
 
