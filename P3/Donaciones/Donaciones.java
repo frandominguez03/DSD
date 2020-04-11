@@ -66,14 +66,17 @@ public class Donaciones extends UnicastRemoteObject implements IDonaciones {
         }
         
         if(existeEnReplica) {
-            replica.entidadRegistrada(nombre).incrementarTotal(cantidad);
+            Entidad encontrada = replica.entidadRegistrada(nombre);
+            encontrada.incrementarTotal(cantidad);
             replica.incrementarSubtotal(cantidad);
+
             System.out.println("Entidad " + nombre + " ha donado " + cantidad + "€");
             return true;
         }
 
         if(existeEnLocal) {
-            this.entidadRegistrada(nombre).incrementarTotal(cantidad);
+            Entidad encontrada = this.entidadRegistrada(nombre);
+            encontrada.incrementarTotal(cantidad);
             this.incrementarSubtotal(cantidad);
             System.out.println("Entidad " + nombre + " ha donado " + cantidad + "€");
             return true;
@@ -167,7 +170,7 @@ public class Donaciones extends UnicastRemoteObject implements IDonaciones {
         if(existeEnReplica) {
             Entidad encontrada = replica.entidadRegistrada(nombre);
 
-            if(encontrada.getNombre() == nombre && encontrada.getCodigoAcceso() == codigoAcceso) {
+            if(encontrada.getNombre().equals(nombre) && encontrada.getCodigoAcceso().equals(codigoAcceso)) {
                 return true;
             }
         }
@@ -182,48 +185,12 @@ public class Donaciones extends UnicastRemoteObject implements IDonaciones {
         if(existeLocal) {
             Entidad encontrada = this.entidadRegistrada(nombre);
 
-            if(encontrada.getNombre() == nombre && encontrada.getCodigoAcceso() == codigoAcceso) {
+            if(encontrada.getNombre().equals(nombre) && encontrada.getCodigoAcceso().equals(codigoAcceso)) {
                 return true;
             }
         }
 
         /* En cualquier otro caso devolvemos false */
         return false;
-    }
-
-    /* Función para devolver el total donado por una entidad */
-    @Override
-    public double getTotalEntidad(String nombre) throws RemoteException {
-        IDonaciones replica = this.getReplica();
-        boolean existeEnReplica = false;
-
-        if(replica != null) {
-            /* ¿Está en la réplica? */
-            if(replica.entidadRegistrada(nombre) != null)
-                existeEnReplica = true;
-        }
-
-        /* Si está en la réplica, comprobamos que los datos de inicio de sesión sean válidos */
-        if(existeEnReplica) {
-            Entidad encontrada = replica.entidadRegistrada(nombre);
-
-            return encontrada.getTotalDonado();
-        }
-
-        boolean existeLocal = false;
-
-        /* ¿Existe en local? */
-        if(this.entidadRegistrada(nombre) != null)
-            existeLocal = true;
-
-        /* Si está en local, comprobamos que los datos de inicio de sesión sean correctos */
-        if(existeLocal) {
-            Entidad encontrada = this.entidadRegistrada(nombre);
-
-            return encontrada.getTotalDonado();
-        }
-
-        /* En cualquier otro caso devolvemos -1 */
-        return -1;
     }
 }
