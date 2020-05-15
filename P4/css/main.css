@@ -14,6 +14,14 @@ body {
     padding-bottom: 10%;
 }
 
+#cajaSensores {
+    background-color: lightgray;
+    border-radius: 5px;
+    width: 40%;
+    margin-left: 10%;
+    padding: 5%;
+}
+
 #estados {
     padding-top: 5%;
     padding-left: 10%;

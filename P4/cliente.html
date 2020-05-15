@@ -39,9 +39,29 @@
 			persiana.innerHTML = data;
 		});
 
+		socket.on('subirPersiana', function(data) {
+			var estadoAC = document.getElementById('estadoPersiana');
+			estadoAC.innerHTML = 'Subida';
+		});
+
+		socket.on('bajarPersiana', function(data) {
+			var estadoAC = document.getElementById('estadoPersiana');
+			estadoAC.innerHTML = 'Bajada';
+		});
+
 		socket.on('estadoAC', function(data) {
 			var estadoAC = document.getElementById('estadoAC');
 			estadoAC.innerHTML = data;
+		});
+
+		socket.on('encenderAC', function(data) {
+			var estadoAC = document.getElementById('estadoAC');
+			estadoAC.innerHTML = 'Activado';
+		});
+
+		socket.on('apagarAC', function(data) {
+			var estadoAC = document.getElementById('estadoAC');
+			estadoAC.innerHTML = 'Desactivado';
 		});
 
 		var cambiarEstadoPersiana = document.getElementById('cambiarEstadoPersiana');

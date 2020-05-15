@@ -43,6 +43,12 @@ var httpServer = http.createServer(
 var sistemaAC = 'Desactivado';
 var estadoPersiana = 'Subida';
 
+// Variables para el control de los actuadores
+var minLuminosidad = 35; // Mínimo de luminosidad para subir la persiana
+var maxLuminosidad = 75; // Máximo de luminosidad para bajar la persiana
+var minTemperatura = 18; // Mínimo de temperatura para encender el aire acondicionado (suponemos que se enciende en Modo Calor)
+var maxTemperatura = 28; // Mínimo de temperatura para encender el aire acondicionado (suponemos que se enciende en Modo Frío)
+
 MongoClient.connect("mongodb://localhost:27017/", {useUnifiedTopology: true}, function(err, db) {
 	httpServer.listen(8080);
 	var io = socketio.listen(httpServer);
@@ -55,22 +61,25 @@ MongoClient.connect("mongodb://localhost:27017/", {useUnifiedTopology: true}, fu
 			client.on('poner', function (data) {
 				collection.insert(data, {safe:true}, function(err, result) {});
 
-				// Notificamos con emit a todos los clientes activos con SocketIO
-				io.sockets.emit('update',
-				"temperatura: " + data.temperatura +
-				", luminosidad: " +  data.luminosidad + 
-				", fecha: " + data.tiempo);
+				console.log("Llega");
 
-				io.sockets.emit('update_temperatura', data.temperatura);
-				io.sockets.emit('update_luminosidad', data.luminosidad);
+				// Ahora, con los datos de la temperatura y luminosidad, decidimos si lanzar los actuadores
+				if(data.temperatura <= minTemperatura || data.temperatura >= maxTemperatura) {
+					io.sockets.emit('encenderAC');
+				}
+
+				else {
+					io.sockets.emit('apagarAC');
+				}
+
+				if(data.luminosidad <= minLuminosidad) {
+					io.sockets.emit('subirPersiana');
+				}
+
+				else if(data.luminosidad >= maxLuminosidad) {
+					io.sockets.emit('bajarPersiana');
+				}
             });
-            
-            // Devolvemos los últimos datos de los sensores
-			client.on('obtener', function () {
-				collection.find(data).toArray(function(err, results){
-					client.emit('obtener', results);
-				});
-			});
 
 			// Obtener el estado de la persiana
 			client.on('getEstadoPersiana', function() {
