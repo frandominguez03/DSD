@@ -1,0 +1,31 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Interfaz Sesores</title>
+    </head>
+    
+	<body>
+        <form name="datosSensores" onsubmit="enviarSensores()">
+            <label for="sTemperatura">Temperatura: <em>(entre 12 y 30 grados)</em></label><br>
+            <input type="number" id="sTemperatura" name="sTemperatura" min="12" max="30"><br>
+            <label for="sLuminosidad">Luminosidad: <em>(entre 0 y 100)</em></label><br>
+            <input type="number" id="Luminosidad" name="sLuminosidad" min="0" max="100"><br><br>
+            <input type="submit" value="Enviar">
+        </form>
+    </body>
+    
+	<script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+        function enviarSensores() {
+            var sTemp = document.getElementById("sTemperatura").value;
+            var sLum = document.getElementById("sLuminosidad").value;
+            var tiempo = new Date();
+
+            var serviceURL = document.URL;
+            var socket = io.connect(serviceURL);
+
+            // Llamamos a la orden poner en el servidor
+            socket.emit('poner', {temperatura:sTemp, luminosidad:sLum, tiempo:tiempo});
+        }
+	</script>
+</html>
