@@ -61,8 +61,6 @@ MongoClient.connect("mongodb://localhost:27017/", {useUnifiedTopology: true}, fu
 			client.on('poner', function (data) {
 				collection.insert(data, {safe:true}, function(err, result) {});
 
-				console.log("Llega");
-
 				// Ahora, con los datos de la temperatura y luminosidad, decidimos si lanzar los actuadores
 				if(data.temperatura <= minTemperatura || data.temperatura >= maxTemperatura) {
 					io.sockets.emit('encenderAC');
@@ -79,6 +77,9 @@ MongoClient.connect("mongodb://localhost:27017/", {useUnifiedTopology: true}, fu
 				else if(data.luminosidad >= maxLuminosidad) {
 					io.sockets.emit('bajarPersiana');
 				}
+
+				io.sockets.emit('actualizarPersiana', estadoPersiana);
+				io.sockets.emit('actualizarAC', estadoPersiana);
             });
 
 			// Obtener el estado de la persiana

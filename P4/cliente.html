@@ -18,9 +18,17 @@
 					<button class="boton" id="cambiarEstadoPersiana">Cambiar estado de la persiana</button>
 					<button class="boton" id="cambiarEstadoAC">Cambiar estado del aire acondicionado</button>
 				</div>
-	
-				<div id="alertas">
-	
+			</div>
+
+			<div id="alertas">
+				<div class="alerta" id="alertaTemperatura" style="display:none;">
+					<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+					<strong>¡Alerta!</strong> La temperatura ha superado el límite establecido. Se ha encendido el Aire Acondicionado.
+				</div>
+
+				<div class="alerta" id="alertaLuminosidad" style="display:none";>
+					<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+					<strong>¡Alerta!</strong> Se ha bajado la persiana para que no te deslumbres ;)
 				</div>
 			</div>
 		</div>
@@ -82,6 +90,16 @@
 		socket.on('actualizarAC', function(data) {
 			var AC = document.getElementById('estadoAC');
 			AC.innerHTML = data;
+		});
+
+		socket.on('encenderAC', function(data) {
+			var alertaAC = document.getElementById('alertaTemperatura');
+			alertaAC.style.display = 'block';
+		});
+
+		socket.on('bajarPersiana', function(data) {
+			var alertaPersiana = document.getElementById('alertaLuminosidad');
+			alertaPersiana.style.display = 'block';
 		});
 	</script>
 </html>
