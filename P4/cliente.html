@@ -8,6 +8,8 @@
     
 	<body>
 		<div id="container">
+			<button class="boton" id="exportarCSV">Exportar a CSV</button>
+
 			<div id="caja">
 				<div id="estados">
 					<p>Estado de la persiana: <span id="estadoPersiana"></span></p>
@@ -82,7 +84,7 @@
 			persiana.innerHTML = data;
 		});
 
-		var cambiarEstadoAC= document.getElementById('cambiarEstadoAC');
+		var cambiarEstadoAC = document.getElementById('cambiarEstadoAC');
 		cambiarEstadoAC.onclick = function() {
 			socket.emit('cambiarEstadoAC');
 		}
@@ -91,6 +93,11 @@
 			var AC = document.getElementById('estadoAC');
 			AC.innerHTML = data;
 		});
+
+		var exportarCSV = document.getElementById('exportarCSV');
+		exportarCSV.onclick = function() {
+			socket.emit('exportar');
+		}
 
 		socket.on('encenderAC', function(data) {
 			var alertaAC = document.getElementById('alertaTemperatura');

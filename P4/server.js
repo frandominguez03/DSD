@@ -1,6 +1,7 @@
 var http = require("http");
 var url = require("url");
 var fs = require("fs");
+var json2csv = require("json2csv").Parser;
 var path = require("path");
 var socketio = require("socket.io");
 var MongoClient = require('mongodb').MongoClient;
@@ -80,7 +81,22 @@ MongoClient.connect("mongodb://localhost:27017/", {useUnifiedTopology: true}, fu
 
 				io.sockets.emit('actualizarPersiana', estadoPersiana);
 				io.sockets.emit('actualizarAC', estadoPersiana);
-            });
+			});
+			
+			// Para exportar a CSV
+			client.on('exportar', function() {
+				collection.find({}).toArray((err, data) => {
+					if (err) throw err;
+
+					var csvParser = new json2csv({ header: true });
+					var csvDatos = csvParser.parse(data);
+
+					fs.writeFile("sensoresBD.csv", csvDatos, function(error) {
+						if (error) throw error;
+						console.log("Archivo creado correctamente");
+					});
+				});
+			});
 
 			// Obtener el estado de la persiana
 			client.on('getEstadoPersiana', function() {
