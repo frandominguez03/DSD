@@ -32,6 +32,11 @@
 					<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
 					<strong>¡Alerta!</strong> Se ha bajado la persiana para que no te deslumbres ;)
 				</div>
+
+				<div class="alerta" id="alertaLuminosidad2" style="display:none";>
+					<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+					<strong>¡Alerta!</strong> Se ha subido la persiana para que entre algo de sol
+				</div>
 			</div>
 		</div>
     </body>
@@ -49,29 +54,9 @@
 			persiana.innerHTML = data;
 		});
 
-		socket.on('subirPersiana', function(data) {
-			var estadoAC = document.getElementById('estadoPersiana');
-			estadoAC.innerHTML = 'Subida';
-		});
-
-		socket.on('bajarPersiana', function(data) {
-			var estadoAC = document.getElementById('estadoPersiana');
-			estadoAC.innerHTML = 'Bajada';
-		});
-
 		socket.on('estadoAC', function(data) {
 			var estadoAC = document.getElementById('estadoAC');
 			estadoAC.innerHTML = data;
-		});
-
-		socket.on('encenderAC', function(data) {
-			var estadoAC = document.getElementById('estadoAC');
-			estadoAC.innerHTML = 'Activado';
-		});
-
-		socket.on('apagarAC', function(data) {
-			var estadoAC = document.getElementById('estadoAC');
-			estadoAC.innerHTML = 'Desactivado';
 		});
 
 		var cambiarEstadoPersiana = document.getElementById('cambiarEstadoPersiana');
@@ -79,15 +64,15 @@
 			socket.emit('cambiarEstadoPersiana');
 		}
 
-		socket.on('actualizarPersiana', function(data) {
-			var persiana = document.getElementById('estadoPersiana');
-			persiana.innerHTML = data;
-		});
-
 		var cambiarEstadoAC = document.getElementById('cambiarEstadoAC');
 		cambiarEstadoAC.onclick = function() {
 			socket.emit('cambiarEstadoAC');
 		}
+
+		socket.on('actualizarPersiana', function(data) {
+			var persiana = document.getElementById('estadoPersiana');
+			persiana.innerHTML = data;
+		});
 
 		socket.on('actualizarAC', function(data) {
 			var AC = document.getElementById('estadoAC');
@@ -107,6 +92,13 @@
 		socket.on('bajarPersiana', function(data) {
 			var alertaPersiana = document.getElementById('alertaLuminosidad');
 			alertaPersiana.style.display = 'block';
+		});
+
+		socket.on('subirPersiana', function(data) {
+			var alertaPersiana = document.getElementById('alertaLuminosidad');
+			alertaPersiana.style.display = 'none';
+			var alertaPersiana2 = document.getElementById('alertaLuminosidad2');
+			alertaPersiana2.style.display = 'block';
 		});
 	</script>
 </html>

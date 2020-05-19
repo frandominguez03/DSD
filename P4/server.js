@@ -65,22 +65,25 @@ MongoClient.connect("mongodb://localhost:27017/", {useUnifiedTopology: true}, fu
 				// Ahora, con los datos de la temperatura y luminosidad, decidimos si lanzar los actuadores
 				if(data.temperatura <= minTemperatura || data.temperatura >= maxTemperatura) {
 					io.sockets.emit('encenderAC');
+					sistemaAC = 'Activado';
 				}
 
 				else {
-					io.sockets.emit('apagarAC');
+					sistemaAC = 'Desactivado';
 				}
 
 				if(data.luminosidad <= minLuminosidad) {
 					io.sockets.emit('subirPersiana');
+					estadoPersiana = 'Subida';
 				}
 
 				else if(data.luminosidad >= maxLuminosidad) {
 					io.sockets.emit('bajarPersiana');
+					estadoPersiana = 'Bajada';
 				}
 
 				io.sockets.emit('actualizarPersiana', estadoPersiana);
-				io.sockets.emit('actualizarAC', estadoPersiana);
+				io.sockets.emit('actualizarAC', sistemaAC);
 			});
 			
 			// Para exportar a CSV

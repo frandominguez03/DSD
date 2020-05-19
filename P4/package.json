@@ -1,0 +1,20 @@
+{
+  "name": "domotica",
+  "version": "1.0.0",
+  "description": "Práctica 4 Desarrollo de Sistemas Distribuidos",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/frandominguez03/DSD.git"
+  },
+  "author": "Francisco Domínguez Lorente",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/frandominguez03/DSD/issues"
+  },
+  "homepage": "https://github.com/frandominguez03/DSD#readme"
+}
